@@ -1,2 +1,1 @@
-from .titleset import Tileset
-from .tilemap import Tilemap
+from .graphisms import *
