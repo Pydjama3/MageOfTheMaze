@@ -49,3 +49,6 @@ class Room:
 
     def get_exits(self):
         return self.exits
+
+    def get_size(self):
+        return self.room_size

@@ -1,4 +1,5 @@
 import pygame.display
+from Game.Player import Player
 from pygame.locals import *
 from .tilemap import Tilemap
 
@@ -24,6 +25,10 @@ class Renderer:
     def render_room(self, room):
         room_map = room.get_map()
         self.render_tilemap(room_map)
+
+    def render_player(self, player: Player):
+        _, _, x, y = player.get_current()
+        pygame.draw.rect(self.screen, (255, 0, 0), (x, y, 50, 50))
 
     def update(self):
         pygame.display.update()

@@ -32,12 +32,14 @@ class Game:
         print(tileset)
 
         self.maze = Maze((7, 7), tileset)
-        self.maze.create_room_safe(0, 0)
+        self.maze.create_room(0, 0, set([(0, 1), (1, 0), (0, -1), (-1, 0)]))
 
         self.player = Player()
+        self.player.set_speed(0.5)
 
         self.render = Renderer(self.screen, tileset)
         self.render.render_room(self.maze.get_room(0, 0))
+        self.render.render_player(self.player)
         self.render.update()
 
         self.running = True
@@ -49,29 +51,48 @@ class Game:
                 if event.type == QUIT:
                     self.running = False
 
-                if event.type == KEYDOWN:
-                    if event.key == K_z:
-                        r_x, r_y, _, _ = self.player.get_current()
-                        self.player.change_room(r_x, r_y+1)
-                    elif event.key == K_d:
-                        r_x, r_y, _, _ = self.player.get_current()
-                        self.player.change_room(r_x+1, r_y)
-                    elif event.key == K_s:
-                        r_x, r_y, _, _ = self.player.get_current()
-                        self.player.change_room(r_x, r_y-1)
-                    elif event.key == K_q:
-                        r_x, r_y, _, _ = self.player.get_current()
-                        self.player.change_room(r_x-1, r_y)
+            keys=pygame.key.get_pressed()
+            if keys[K_s]:
+                self.player.move((0, 1))
+            elif keys[K_d]:
+                self.player.move((1, 0))
+            elif keys[K_z]:
+                self.player.move((0, -1))
+            elif keys[K_q]:
+                self.player.move((-1, 0))
+
+            
 
             if self.player.get_current() != last_pos:
-                print("-" * 30)
+                #print("-" * 30)
                 last_pos = self.player.get_current()
 
-                r_x, r_y, _, _ = self.player.get_current()
+                r_x, r_y, x, y = self.player.get_current()
                 if self.maze.get_room(r_x, r_y) is None:
                     self.maze.create_room_safe(r_x, r_y)
 
+                room = self.maze.get_room(r_x, r_y)
+                w, h = room.get_size()
+                t_x = x // w
+                t_y = y // h
+                
+                neigh = [None] * 4
+                neigh[0] = room.get_map().get_at_coord((t_x, t_y+1))
+                neigh[1] = room.get_map().get_at_coord((t_x + 1, t_y))
+                neigh[2] = room.get_map().get_at_coord((t_x, t_y-1))
+                neigh[3] = room.get_map().get_at_coord((t_x - 1, t_y))
+                
+                if neigh[0].starts_with("water"):
+                    self.player.block_move_y(1)
+                if neigh[1].starts_with("water"):
+                    self.player.block_move_x(1)
+                if neigh[2].starts_with("water"):
+                    self.player.block_move_y(-1)
+                if neigh[3].starts_with("water"):
+                    self.player.block_move_x(-1)
+                
                 self.render.render_room(self.maze.get_room(r_x, r_y))
+                self.render.render_player(self.player)
                 self.render.update()
 
         pygame.quit()
