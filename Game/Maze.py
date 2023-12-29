@@ -7,6 +7,9 @@ class Maze:
         self.rooms_size = room_size
         self.tileset = tileset
 
+    def create_room(self, x, y, exits):
+        self.rooms[(x, y)] = Room.generate(x, y, self.rooms_size, self.tileset, exits)
+    
     def create_room_safe(self, x, y):
         neighbours = self.get_neighbours((x, y))
         print(x, y)
@@ -35,6 +38,7 @@ class Maze:
 
     def get_room(self, x, y):
         return self.rooms.get((x, y), None)
+      
     def delete_room(self, x, y):
         del self.rooms[(x, y)]
 

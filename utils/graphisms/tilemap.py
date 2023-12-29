@@ -45,6 +45,10 @@ class Tilemap:
     def set_at_ccoords(self, coords, name):
         self.map[coords] = name
 
+    def get_at_coord(self, coords):
+        x, y = coords
+        return self.map[x, y]
+
     def get_map(self):
         return self.map
 

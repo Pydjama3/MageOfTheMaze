@@ -1,5 +1,4 @@
 from wfc import Wave, State, Rule
-from random import randint
 import colorama
 
 texture_to_coordinates = {
