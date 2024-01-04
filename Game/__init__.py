@@ -1,3 +1,3 @@
-from .Maze import *
-from .Player import *
-from .Room import *
+from .maze import *
+from .player import *
+from .room import *

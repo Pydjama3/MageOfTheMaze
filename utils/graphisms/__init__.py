@@ -1,2 +1,2 @@
-from .tilemap import Tilemap
 from .titleset import Tileset
+from .renderer import Renderer

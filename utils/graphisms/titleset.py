@@ -27,6 +27,9 @@ class Tileset:
     def get_texture(self, name):
         return self.tile_repertoire.get(name, None)
 
+    def get_size(self):
+        return self.size
+
     def get_real_size(self):
         return self.size[0]*self.factor, self.size[1]*self.factor
 

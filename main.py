@@ -3,7 +3,7 @@ from pygame.locals import *
 
 from Game import Room, Player, Maze
 from utils import *
-from Game.Constants import all_textures_rep, texture_to_coordinates
+from Game.constants import all_textures_rep, texture_to_coordinates
 from utils.graphisms.renderer import Renderer
 
 file = 'assets/textures.png'
@@ -16,11 +16,11 @@ class Game:
 
     def __init__(self):
         pygame.init()
-        self.size = pygame.display.get_desktop_sizes()
-        self.screen = pygame.display.set_mode(self.SIZE)
+        self.SIZE = pygame.display.get_desktop_sizes()[0]
+        self.screen = pygame.display.set_mode(self.SIZE)  # (0, 0) FULLSCREEN
         pygame.display.set_caption("ELIAS CAN CODE!!!")
 
-        tileset = Tileset('./assets/textures.png', size=(7, 7))
+        tileset = Tileset('./assets/textures.png', size=(7, 7), factor=self.SIZE[1]//49)
         for texture in all_textures_rep:
             check = texture.split("_")
             if len(check) > 2:
@@ -32,39 +32,43 @@ class Game:
         print(tileset)
 
         self.maze = Maze((7, 7), tileset)
-        self.maze.create_room(0, 0, set([(0, 1), (1, 0), (0, -1), (-1, 0)]))
+        self.maze.create_room(0, 0, {(0, 1), (1, 0), (0, -1), (-1, 0)})
 
         self.player = Player()
         self.player.set_speed(0.5)
 
-        self.render = Renderer(self.screen, tileset)
-        self.render.render_room(self.maze.get_room(0, 0))
-        self.render.render_player(self.player)
-        self.render.update()
+        self.renderer = Renderer(self.screen, tileset)
+        self.renderer.render_room(self.maze.get_room(0, 0))
+        self.renderer.render_player(self.player)
+        self.renderer.update()
 
         self.running = True
 
     def run(self):
         last_pos = self.player.get_current()
         while self.running:
+            has_moved = False
             for event in pygame.event.get():
                 if event.type == QUIT:
                     self.running = False
 
-            keys=pygame.key.get_pressed()
+            keys = pygame.key.get_pressed()
             if keys[K_s]:
                 self.player.move((0, 1))
+                has_moved = True
             elif keys[K_d]:
                 self.player.move((1, 0))
+                has_moved = True
             elif keys[K_z]:
                 self.player.move((0, -1))
+                has_moved = True
             elif keys[K_q]:
                 self.player.move((-1, 0))
+                has_moved = True
+            elif keys[K_ESCAPE]:
+                self.running = False
 
-            
-
-            if self.player.get_current() != last_pos:
-                #print("-" * 30)
+            if has_moved:
                 last_pos = self.player.get_current()
 
                 r_x, r_y, x, y = self.player.get_current()
@@ -72,28 +76,32 @@ class Game:
                     self.maze.create_room_safe(r_x, r_y)
 
                 room = self.maze.get_room(r_x, r_y)
-                w, h = room.get_size()
-                t_x = x // w
-                t_y = y // h
-                
+                w, h = room.get_tile_map().get_real_size()
+                x_tiles, y_tiles = room.get_size()
+                print(w, h)
+                t_x = int((x / w) * x_tiles)
+                t_y = int((y / h) * y_tiles)
+                print(t_x, t_y)
+
                 neigh = [None] * 4
-                neigh[0] = room.get_map().get_at_coord((t_x, t_y+1))
-                neigh[1] = room.get_map().get_at_coord((t_x + 1, t_y))
-                neigh[2] = room.get_map().get_at_coord((t_x, t_y-1))
-                neigh[3] = room.get_map().get_at_coord((t_x - 1, t_y))
-                
-                if neigh[0].starts_with("water"):
+                neigh[0] = room.get_tile_map().get_at_coord((t_x, t_y + 1))
+                neigh[1] = room.get_tile_map().get_at_coord((t_x + 1, t_y))
+                neigh[2] = room.get_tile_map().get_at_coord((t_x, t_y - 1))
+                neigh[3] = room.get_tile_map().get_at_coord((t_x - 1, t_y))
+
+                if neigh[0].startswith("water"):
                     self.player.block_move_y(1)
-                if neigh[1].starts_with("water"):
+                if neigh[1].startswith("water"):
                     self.player.block_move_x(1)
-                if neigh[2].starts_with("water"):
+                if neigh[2].startswith("water"):
                     self.player.block_move_y(-1)
-                if neigh[3].starts_with("water"):
+                if neigh[3].startswith("water"):
                     self.player.block_move_x(-1)
-                
-                self.render.render_room(self.maze.get_room(r_x, r_y))
-                self.render.render_player(self.player)
-                self.render.update()
+
+                self.player.apply_movement()
+                self.renderer.render_room(self.maze.get_room(r_x, r_y))
+                self.renderer.render_player(self.player)
+                self.renderer.update()
 
         pygame.quit()
 

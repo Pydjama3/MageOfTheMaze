@@ -1,4 +1,4 @@
-from .Room import *
+from .room import *
 
 
 class Maze:
@@ -36,7 +36,7 @@ class Maze:
 
         return neighbours
 
-    def get_room(self, x, y):
+    def get_room(self, x, y) -> Room | None:
         return self.rooms.get((x, y), None)
       
     def delete_room(self, x, y):

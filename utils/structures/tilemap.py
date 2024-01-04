@@ -1,12 +1,12 @@
 import pygame
 import numpy as np
-from Game.Constants import *
+from Game.constants import *
+
 
 class Tilemap:
-    def __init__(self, tileset, size=(10, 20), tile_size=(7*10, 7*10)):
+    def __init__(self, tileset, size=(10, 20)):
 
         self.size = size
-        self.tile_size = tile_size
         self.tileset = tileset
         self.map = np.zeros(size, dtype=int)
 
@@ -42,12 +42,12 @@ class Tilemap:
 
         self.map = np.array([[item.state.name for item in row] for row in landscape_wave.collapse()])
 
-    def set_at_ccoords(self, coords, name):
+    def set_at_coords(self, coords, name):
         self.map[coords] = name
 
     def get_at_coord(self, coords):
         x, y = coords
-        return self.map[x, y]
+        return self.map[int(y), int(x)]
 
     def get_map(self):
         return self.map
@@ -59,7 +59,12 @@ class Tilemap:
         return self.size
 
     def get_tile_size(self):
-        return self.tile_size
+        return self.tileset.get_real_size()
+
+    def get_real_size(self):
+        w, h = self.size
+        t_w, t_h = self.tileset.get_real_size()
+        return w*t_w, h*t_h
 
     def __str__(self):
         return f'{self.__class__.__name__} {self.size}'

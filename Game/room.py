@@ -3,7 +3,7 @@ from random import randint
 from math import sin, cos, radians
 
 from utils import Tilemap
-from .Constants import *
+from .constants import *
 
 
 class Room:
@@ -16,7 +16,7 @@ class Room:
         self.visited = False
         self.generated = False
         self.visited_by = []
-        self.map = np.array([])
+        self.map = None
 
     @staticmethod
     def generate(x, y, room_size, tileset, exits=None):
@@ -28,14 +28,14 @@ class Room:
 
         room = Room(x, y, exits, room_size)
 
-        tile_map = Tilemap(tileset, room_size, tileset.get_real_size())
+        tile_map = Tilemap(tileset, room_size)
         tile_map.set_wfc()
 
         w, h = room_size
         w = w - 1
         h = h - 1
         for ex, ey in exits:
-            tile_map.set_at_ccoords((int((ex*w/2) + w/2), int((ey*h/2) + h/2)), "door")
+            tile_map.set_at_coords((int((ex * w / 2) + w / 2), int((ey * h / 2) + h / 2)), "door")
 
         room.set_map(tile_map)
 
@@ -44,7 +44,7 @@ class Room:
     def set_map(self, _map):
         self.map = _map
 
-    def get_map(self) -> np.array:
+    def get_tile_map(self) -> Tilemap | None:
         return self.map
 
     def get_exits(self):
