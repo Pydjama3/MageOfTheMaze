@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 
 
 class Tileset:
@@ -16,7 +17,7 @@ class Tileset:
     def load_tile(self, name, position, rotation=0):
         if name not in self.tile_repertoire.keys():
             x, y = position
-            tile = pygame.Surface(self.size)
+            tile = pygame.Surface(self.size, SRCALPHA)
             tile.blit(self.image, (0, 0), (x * self.size[0], y * self.size[1], *self.size))
             bigger = pygame.transform.scale_by(tile, self.factor)
             rotated = pygame.transform.rotate(bigger, rotation)

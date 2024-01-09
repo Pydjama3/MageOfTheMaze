@@ -1,5 +1,7 @@
 import pygame
 import numpy as np
+from wfc import Wave
+
 from Game.constants import *
 
 
@@ -43,11 +45,12 @@ class Tilemap:
         self.map = np.array([[item.state.name for item in row] for row in landscape_wave.collapse()])
 
     def set_at_coords(self, coords, name):
-        self.map[coords] = name
-
-    def get_at_coord(self, coords):
         x, y = coords
-        return self.map[int(y), int(x)]
+        self.map[y, x] = name
+
+    def get_at_coord(self, coords: tuple[int, int], default=None):
+        x, y = coords
+        return self.map[y, x] if max(0, min(x, self.size[0]-1)) == x and max(0, min(y, self.size[1]-1)) == y else default
 
     def get_map(self):
         return self.map

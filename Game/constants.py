@@ -1,8 +1,27 @@
-from wfc import Wave, State, Rule
-from random import randint
 import colorama
+from wfc import State, Rule
 
-texture_to_coordinates = {
+TILES_TEXTURES = './assets/textures.png'
+PLAYER_TEXTURES = './assets/raiders/Raider_3/'
+ZOMBIE_TEXTURES = './assets/zombies/Wile Zombie/'
+
+TEST_PLAYER_SIZE = 5, 5
+PLAYER_SPEED_FACTOR = 1 / 400
+DIST_TO_NEXT_TILE = 0.1
+
+TILE_SIZE = 7, 7
+ROOM_SIZE = 7, 7
+
+PLAYER_IDLE_ANI = [
+    (0, 0),
+    (1, 0),
+    (2, 0),
+    (3, 0),
+    (4, 0),
+    (5, 0)
+]
+
+TEXTURE_TO_COORDINATES = {
     "grass": (0, 0),
     "water_straight": (1, 0),
     "path_elbow": (2, 0),
@@ -14,7 +33,7 @@ texture_to_coordinates = {
     "door": (2, 2)
 }
 
-all_textures_rep = [
+ALL_TEXTURES_REP = [
     "grass",
     "water_straight_0",
     "water_straight_90",
@@ -34,6 +53,12 @@ all_textures_rep = [
     "door"
 ]
 
+BLOCKED_TILES = [
+    "water",
+    "lava",
+    ""
+]
+
 cmap = {
     "water": colorama.Fore.BLUE,
     "grass": colorama.Fore.GREEN,
@@ -47,14 +72,22 @@ grass = State(
     "grass",
     Rule(
         lambda x, y: {
-            (x + 1, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x - 1, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x - 1, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x + 1, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x + 1, y): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x - 1, y): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"]
+            (x + 1, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                             "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x - 1, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                             "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x - 1, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                             "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x + 1, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                             "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                         "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                         "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x + 1, y): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                         "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x - 1, y): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                         "water_elbow_90", "water_elbow_180", "water_elbow_270"]
         }))
 
 water_straight_0 = State(
@@ -261,24 +294,36 @@ dirt = State(
     "dirt",
     Rule(
         lambda x, y: {
-            (x + 1, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x - 1, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x - 1, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x + 1, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x + 1, y): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x - 1, y): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"]
+            (x + 1, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                             "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x - 1, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                             "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x - 1, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                             "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x + 1, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                             "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                         "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                         "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x + 1, y): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                         "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x - 1, y): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                         "water_elbow_90", "water_elbow_180", "water_elbow_270"]
         }))
 
 stone = State(
     "stone",
     Rule(
         lambda x, y: {
-            (x + 1, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x - 1, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x - 1, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
-            (x + 1, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0", "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x + 1, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                             "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x - 1, y + 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                             "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x - 1, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                             "water_elbow_90", "water_elbow_180", "water_elbow_270"],
+            (x + 1, y - 1): ["dirt", "stone", "grass", "water_straight_0", "water_straight_90", "water_elbow_0",
+                             "water_elbow_90", "water_elbow_180", "water_elbow_270"],
             (x, y - 1): ["dirt", "stone", "grass"],
             (x, y + 1): ["dirt", "stone", "grass"],
             (x + 1, y): ["dirt", "stone", "grass"],
@@ -287,7 +332,7 @@ stone = State(
 
 lava = State(
     "lava",
-    Rule(lambda x, y:{
+    Rule(lambda x, y: {
         (x + 1, y + 1): ["dirt", "stone", "grass"],
         (x - 1, y + 1): ["dirt", "stone", "grass"],
         (x - 1, y - 1): ["dirt", "stone", "grass"],
@@ -302,13 +347,13 @@ lava = State(
 door = State(
     "door",
     Rule(lambda x, y: {
-            (x + 1, y + 1): ["dirt", "stone", "grass"],
-            (x - 1, y + 1): ["dirt", "stone", "grass"],
-            (x - 1, y - 1): ["dirt", "stone", "grass"],
-            (x + 1, y - 1): ["dirt", "stone", "grass"],
-            (x, y - 1): ["path_straight_0", "grass", "path_elbow_0", "path_elbow_270"],
-            (x, y + 1): ["path_straight_0", "grass", "path_elbow_90", "path_elbow_180"],
-            (x + 1, y): ["path_straight_90", "grass", "path_elbow_180", "path_elbow_270"],
-            (x - 1, y): ["path_straight_90", "grass", "path_elbow_0", "path_elbow_90"]
+        (x + 1, y + 1): ["dirt", "stone", "grass"],
+        (x - 1, y + 1): ["dirt", "stone", "grass"],
+        (x - 1, y - 1): ["dirt", "stone", "grass"],
+        (x + 1, y - 1): ["dirt", "stone", "grass"],
+        (x, y - 1): ["path_straight_0", "grass", "path_elbow_0", "path_elbow_270"],
+        (x, y + 1): ["path_straight_0", "grass", "path_elbow_90", "path_elbow_180"],
+        (x + 1, y): ["path_straight_90", "grass", "path_elbow_180", "path_elbow_270"],
+        (x - 1, y): ["path_straight_90", "grass", "path_elbow_0", "path_elbow_90"]
     })
 )
