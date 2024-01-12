@@ -46,3 +46,4 @@ class GameSprite(Sprite):
 
         self.animator.set_settings(self.flip, self.rotation)
         self.image = self.animator.update()
+        return self.image is not None

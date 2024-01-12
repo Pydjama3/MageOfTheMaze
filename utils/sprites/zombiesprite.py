@@ -4,8 +4,12 @@ from utils.graphisms.animator import Animator
 
 class ZombieSprite(GameSprite):
     def __init__(self, rect, id_, factor):
-        player_idle = Animation('/assets/zombies/Wild Zombie/Idle.png', 6, factor)
-        player_moving = Animation('/assets/zombies/Wild Zombie/Walk.png', 7, factor)
-        player_attacking = Animation('/assets/zombies/Wild Zombie/Attack_1.png', 5, factor)
+        zombie_idle = Animation('assets/zombies/Wild Zombie/Idle.png', 9, factor)
+        zombie_moving = Animation('assets/zombies/Wild Zombie/Walk.png', 10, factor)
+        zombie_attacking = Animation('assets/zombies/Wild Zombie/Attack_1.png', 4, factor)
 
-        super().__init__("zombie_"+str(id_), rect, Animator(.2), player_idle, player_moving, player_attacking)
+        zombie_idle.load_all()
+        zombie_moving.load_all()
+        zombie_attacking.load_all()
+
+        super().__init__("zombie_"+str(id_), rect, Animator(.2), zombie_idle, zombie_moving, zombie_attacking)

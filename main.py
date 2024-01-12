@@ -27,14 +27,27 @@ class Game:
 
         self.maze = Maze(ROOM_SIZE, tileset)
         self.maze.create_room(0, 0, {(0, 1), (1, 0), (0, -1), (-1, 0)})
+        room = self.maze.get_room(0, 0)
 
-        self.player = Player(100, 100)
+        self.player = None
+        r_map = room.get_tile_map().get_map()
+        
+        for i in range(len(r_map)):
+            for j in range(len(r_map[i])):
+                if r_map[i][j] == "door":
+                    self.player = Player(j*(self.size[1]/ROOM_SIZE[0]), i*(self.size[1]/ROOM_SIZE[1]))
+                    break
+        
+        # self.player = Player(7, 229)
         self.player.set_speed(self.size[1]*PLAYER_SPEED_FACTOR)
 
         self.renderer = Renderer(self.screen, tileset)
         self.renderer.render_room(self.maze.get_room(0, 0))
         self.renderer.render_player(self.player)
         self.renderer.update()
+
+        self.zombies = []
+        
 
         self.running = True
 

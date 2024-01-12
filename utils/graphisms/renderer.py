@@ -4,8 +4,9 @@ import pygame.display
 from pygame.locals import *
 from pygame.sprite import Group
 
-from Game.player import Player
+from Game.player import Player, PlayerState
 from utils.sprites import PlayerSprite
+from utils.sprites.zombiesprite import ZombieSprite
 
 
 class Renderer:
@@ -65,12 +66,16 @@ class Renderer:
         _, _, x, y = player.get_current()
         self.player_sprite.set_state(player.state)
         self.player_sprite.set_animator_settings(flip=((player.orientation-1) % 3, 0))
-        self.player_sprite.update(x - self.player_size[0] // 2, y - self.player_size[1])
+        if not self.player_sprite.update(x - self.player_size[0] // 2, y - self.player_size[1]):
+            player.set_state(PlayerState.IDLE)
+            self.player_sprite.set_state(player.state)
+            self.player_sprite.update(x - self.player_size[0] // 2, y - self.player_size[1])
+            
 
-        # player_surface = pygame.surface.Surface(self.player_size)
-        # pygame.draw.rect(player_surface, (255, 0, 0), (0, 0) + self.player_size)
-        # self.canvas.append(self.Canva(player_surface, self.Modes.ABSOLUTE, self.Support.MAIN, 1,
-        #                               position=(x - self.player_size[0] // 2, y - self.player_size[1])))
+        player_surface = pygame.surface.Surface(self.player_size)
+        pygame.draw.rect(player_surface, (255, 0, 0), (0, 0) + self.player_size)
+        self.canvas.append(self.Canva(player_surface, self.Modes.ABSOLUTE, self.Support.MAIN, 1,
+                                      position=(x, y)))
 
     def render_zombie(self, zombie):
         pass
