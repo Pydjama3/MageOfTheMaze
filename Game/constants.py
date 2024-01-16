@@ -5,6 +5,8 @@ TILES_TEXTURES = './assets/textures.png'
 PLAYER_TEXTURES = './assets/raiders/Raider_3/'
 ZOMBIE_TEXTURES = './assets/zombies/Wile Zombie/'
 
+MAIN_THEME = "assets/musics/MageOfTheMazeMainTheme.mp3"
+
 TEST_PLAYER_SIZE = 5, 5
 PLAYER_SPEED_FACTOR = 1 / 400
 DIST_TO_NEXT_TILE = 0.1

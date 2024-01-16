@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 
 from Game import (Player, Maze, DIST_TO_NEXT_TILE, ALL_TEXTURES_REP, TEXTURE_TO_COORDINATES, BLOCKED_TILES, ROOM_SIZE,
-                  TILE_SIZE, PLAYER_SPEED_FACTOR, TILES_TEXTURES, PlayerState)
+                  TILE_SIZE, PLAYER_SPEED_FACTOR, TILES_TEXTURES, PlayerState, MAIN_THEME)
 from utils import *
 from utils.graphisms.renderer import Renderer
 
@@ -12,7 +12,11 @@ class Game:
         pygame.init()
         self.size = pygame.display.get_desktop_sizes()[-1]
         self.screen = pygame.display.set_mode(self.size)  # (0, 0), FULLSCREEN)
-        pygame.display.set_caption("Mage of the Maze - Chaotic Studio")
+        pygame.display.set_caption("Mage of the Maze - Chaotic Studio - Louis and Florence")
+
+        pygame.mixer.init()
+        pygame.mixer.music.load(MAIN_THEME)
+        pygame.mixer.music.play(-1)
 
         tileset = Tileset(TILES_TEXTURES, size=TILE_SIZE, factor=self.size[1] / (ROOM_SIZE[0] * TILE_SIZE[0]))
         for texture in ALL_TEXTURES_REP:
