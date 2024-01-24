@@ -8,16 +8,26 @@ from utils.graphisms.renderer import Renderer
 
 
 class Game:
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        Classe qui gère le jeu dans son ensemble
+        TODO: déplacer cette classe dans Game/
+        """
+
+        # 1 --- INITIALISATION ---
+
+        # a -- la fenètre et pygame --
         pygame.init()
         self.size = pygame.display.get_desktop_sizes()[-1]
         self.screen = pygame.display.set_mode(self.size)  # (0, 0), FULLSCREEN)
-        pygame.display.set_caption("Mage of the Maze - Chaotic Studio - Louis and Florence")
+        pygame.display.set_caption("Mage of the Maze - Chaotic Studio - Elias, Florence and Louis")
 
+        # b -- la musique --
         pygame.mixer.init()
         pygame.mixer.music.load(MAIN_THEME)
         pygame.mixer.music.play(-1)
 
+        # c -- les textures --
         tileset = Tileset(TILES_TEXTURES, size=TILE_SIZE, factor=self.size[1] / (ROOM_SIZE[0] * TILE_SIZE[0]))
         for texture in ALL_TEXTURES_REP:
             check = texture.split("_")
@@ -29,13 +39,14 @@ class Game:
                 tileset.load_tile(texture, TEXTURE_TO_COORDINATES.get(texture))
         print(tileset)
 
+        # d -- le labyrinthe --
         self.maze = Maze(ROOM_SIZE, tileset)
         self.maze.create_room(0, 0, {(0, 1), (1, 0), (0, -1), (-1, 0)})
         room = self.maze.get_room(0, 0)
 
+        # e -- le joueur --
         self.player = None
         r_map = room.get_tile_map().get_map()
-        
         for i in range(len(r_map)):
             for j in range(len(r_map[i])):
                 if r_map[i][j] == "door":
@@ -45,25 +56,30 @@ class Game:
         # self.player = Player(7, 229)
         self.player.set_speed(self.size[1]*PLAYER_SPEED_FACTOR)
 
+        # f -- le rendu --
         self.renderer = Renderer(self.screen, tileset)
         self.renderer.render_room(self.maze.get_room(0, 0))
         self.renderer.render_player(self.player)
         self.renderer.update()
 
         self.zombies = []
-        
 
+        # g -- find d'initialisation
         self.running = True
 
     def run(self):
+        # boucle principal
         while self.running:
             has_moved = False
+
+            # les évènements/interactions joueur (sauf les touches)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     self.running = False
                 if event.type == MOUSEBUTTONDOWN:
                     self.player.set_state(PlayerState.FIGHTING)
 
+            # on ne bouge pas si le joueur est entrain de se battre
             if self.player.get_state() != PlayerState.FIGHTING:
                 self.player.reset_movement()
                 keys = pygame.key.get_pressed()
@@ -91,12 +107,11 @@ class Game:
                 w, h = room.get_tile_map().get_real_size()
                 w_tiles, h_tiles = room.get_size()
 
+                # mettre la positon du joueur à l'échelle de la Tilemap: pour un écran
                 t_x = (x / w) * w_tiles
                 t_y = (y / h) * h_tiles
-                print(t_x, t_y)
-                print(t_y-DIST_TO_NEXT_TILE < 0, t_x-DIST_TO_NEXT_TILE < 0)
-                print("-"*30)
 
+                # vérifier les cases/positions voisines pour empêcher le joueur de se dépacer sur certaines cases
                 neigh = [""] * 4
                 neigh[0] = room.get_tile_map().get_at_coord((int(t_x), int(t_y - DIST_TO_NEXT_TILE)), "").split("_")[0]
                 neigh[1] = room.get_tile_map().get_at_coord((int(t_x + DIST_TO_NEXT_TILE), int(t_y)), "").split("_")[0]
@@ -112,12 +127,14 @@ class Game:
                 if neigh[3] in BLOCKED_TILES or t_x-DIST_TO_NEXT_TILE < 0:
                     self.player.block_move_x(-1)
 
+                # on met tout à jour
                 self.player.apply_movement()
 
             self.renderer.render_room(self.maze.get_room(r_x, r_y))
             self.renderer.render_player(self.player)
 
             self.renderer.update()
+            # fin itération principale
 
         pygame.quit()
 

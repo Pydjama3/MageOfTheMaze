@@ -1,6 +1,5 @@
-from utils.structures.gamesprite import GameSprite
-from utils.graphisms.animation import Animation
-from utils.graphisms.animator import Animator
+from utils import Animation, Animator, GameSprite
+
 
 class ZombieSprite(GameSprite):
     def __init__(self, rect, id_, factor):
@@ -12,4 +11,4 @@ class ZombieSprite(GameSprite):
         zombie_moving.load_all()
         zombie_attacking.load_all()
 
-        super().__init__("zombie_"+str(id_), rect, Animator(.2), zombie_idle, zombie_moving, zombie_attacking)
+        super().__init__("zombie_" + str(id_), rect, Animator(.2), zombie_idle, zombie_moving, zombie_attacking)

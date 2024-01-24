@@ -1,6 +1,4 @@
-from utils.structures import GameSprite
-from utils.graphisms.animation import Animation
-from utils.graphisms.animator import Animator
+from utils import Animator, Animation, GameSprite
 
 
 class PlayerSprite(GameSprite):

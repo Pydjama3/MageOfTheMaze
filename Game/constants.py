@@ -1,16 +1,21 @@
 import colorama
 from wfc import State, Rule
 
+# Rôle utilitaire pour éviter de répéter et aussi rendre le code plus lisible
+
+# --- FILE PATHS ---
 TILES_TEXTURES = './assets/textures.png'
 PLAYER_TEXTURES = './assets/raiders/Raider_3/'
 ZOMBIE_TEXTURES = './assets/zombies/Wile Zombie/'
 
 MAIN_THEME = "assets/musics/MageOfTheMazeMainTheme.mp3"
 
+# --- JOUEUR---
 TEST_PLAYER_SIZE = 5, 5
 PLAYER_SPEED_FACTOR = 1 / 400
 DIST_TO_NEXT_TILE = 0.1
 
+# --- TILSETS ET TILEMAP ---
 TILE_SIZE = 7, 7
 ROOM_SIZE = 7, 7
 
@@ -70,6 +75,7 @@ cmap = {
     "path": colorama.Fore.YELLOW
 }
 
+# --- WFC RULES ---
 grass = State(
     "grass",
     Rule(

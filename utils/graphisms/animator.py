@@ -2,9 +2,11 @@ import time
 
 import pygame
 
+from utils import Animation
+
 
 class Animator:
-    def __init__(self, delay):
+    def __init__(self, delay: float) -> None:
         self.n_frames = None
         self.loop = None
         self.animation = None
@@ -15,7 +17,11 @@ class Animator:
         self.flip = 0, 0
         self.rotation = 0
 
-    def update(self):
+    def update(self) -> pygame.surface.Surface | None:
+        """
+        Met à jour l'image actuelle de l'animation et retourne cette nouvelle image (dépendant du temps)
+        :return: L'image si la transition est possible sinon None
+        """
         if not self.running:
             return None
 
@@ -30,7 +36,13 @@ class Animator:
         f_x, f_y = self.flip
         return pygame.transform.rotate(pygame.transform.flip(self.animation.get_frame(self.current_frame), f_x, f_y), self.rotation)
 
-    def start_animation(self, animation, loop=False, at=0):
+    def start_animation(self, animation: Animation, loop: bool = False, at: int = 0) -> None:
+        """
+        Démarre le chrono de l'animation renseignée dans la fonction.
+        :param animation: L'animation à démarrer
+        :param loop: Si l'animation est un boucle
+        :param at: L'index de départ
+        """
         self.animation = animation
         self.loop = loop
         self.n_frames = animation.get_frame_num()
@@ -39,16 +51,31 @@ class Animator:
         self.current_frame = at
         self.last_update = time.time()
 
-    def stop_animation(self):
+    def stop_animation(self) -> None:
+        """
+        Arrête l'animation
+        """
         self.running = False
 
-    def is_animated(self):
+    def is_animated(self) -> bool:
+        """
+        Savoir si l'animateur gère une animation
+        :return: Vrai si une animation est en cours d'éxécution sinon, faux
+        """
         return self.running
 
-    def reset_settings(self):
+    def reset_settings(self) -> None:
+        """
+        Remet à jour les paramètres de rotation et les retournements horizontaux et verticaux de l'animation
+        """
         self.flip = 0, 0
         self.rotation = 0
 
-    def set_settings(self, flip=(0, 0), rotation=0):
+    def set_settings(self, flip: tuple[int, int] = (0, 0), rotation: float = 0) -> None:
+        """
+        Met à jour les paramètres de rendu de l'animation
+        :param flip: (x, y) sont des booléens numériques (0 ou 1) avec x/y qui définit si l'image est retourné sur l'axe horizontal/vertical
+        :param rotation: Si l'image est retournée d'un angle en degrés
+        """
         self.flip = flip
         self.rotation = rotation

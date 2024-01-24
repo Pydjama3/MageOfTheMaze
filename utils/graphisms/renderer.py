@@ -4,9 +4,9 @@ import pygame.display
 from pygame.locals import *
 from pygame.sprite import Group
 
+import utils
 from Game.player import Player, PlayerState
-from utils.sprites import PlayerSprite
-from utils.sprites.zombiesprite import ZombieSprite
+from Game.sprites import PlayerSprite
 
 
 class Renderer:
@@ -21,14 +21,28 @@ class Renderer:
         RIGHT = "right_pannel"
 
     class Canva:
-        def __init__(self, content: pygame.surface.Surface, display_mode, support=None, depth=0, position=(0, 0)):
+        def __init__(self, content: pygame.surface.Surface, display_mode, support=None, depth: int = 0,
+                     position: object = (0, 0)) -> None:
+            """
+            Créé un vanva avec différets plans à différentes profondeurs
+            :param content: le contenu
+            :param display_mode: le mode d'affichage
+            :param support: l'endroit/la zone d'affichage
+            :param depth: à quelle profondeur se place ce plan pour l'odre d'affichage
+            :param position: la position suivant le mode et le support
+            """
             self.content = content
             self.display_mode = display_mode
             self.depth = depth
             self.position = position
             self.destination_support = support
 
-    def __init__(self, screen: pygame.Surface, tileset):
+    def __init__(self, screen: pygame.Surface, tileset: utils.Tileset) -> None:
+        """
+        Créé un "moteur de rendu" qui ne gère en réalité que la position et l'odre d'affichage des plans
+        :param screen: L'écran/la fenètre d'affchage mère
+        :param tileset: Les textures utilisées
+        """
         self.screen = screen
         self.tileset = tileset
 
@@ -45,7 +59,11 @@ class Renderer:
 
         self.all_sprites.add(self.player_sprite)
 
-    def render_tilemap(self, tilemap):
+    def render_tilemap(self, tilemap) -> None:
+        """
+        Affiche une tilemap sur l'écran
+        :param tilemap: La tilemap à affiché avec les codes correspondants
+        """
         m, n = tilemap.get_size()
         x, y = tilemap.get_tile_size()
         t_map = tilemap.get_map()
@@ -58,11 +76,19 @@ class Renderer:
 
         self.canvas.append(self.Canva(image, self.Modes.ABSOLUTE, self.Support.MAIN, -1, (0, 0)))
 
-    def render_room(self, room):
+    def render_room(self, room) -> None:
+        """
+        Affiche une pièce du labyrinthe sur l'écran
+        :param room: La pièce à afficher
+        """
         room_map = room.get_tile_map()
         self.render_tilemap(room_map)
 
-    def render_player(self, player: Player):
+    def render_player(self, player: Player) -> None:
+        """
+        Affiche le joueur sur l'écran
+        :param player: Le joueur à afficher
+        """
         _, _, x, y = player.get_current()
         self.player_sprite.set_state(player.state)
         self.player_sprite.set_animator_settings(flip=((player.orientation-1) % 3, 0))
@@ -70,17 +96,19 @@ class Renderer:
             player.set_state(PlayerState.IDLE)
             self.player_sprite.set_state(player.state)
             self.player_sprite.update(x - self.player_size[0] // 2, y - self.player_size[1])
-            
 
-        player_surface = pygame.surface.Surface(self.player_size)
-        pygame.draw.rect(player_surface, (255, 0, 0), (0, 0) + self.player_size)
-        self.canvas.append(self.Canva(player_surface, self.Modes.ABSOLUTE, self.Support.MAIN, 1,
-                                      position=(x, y)))
+        # player_surface = pygame.surface.Surface(self.player_size)
+        # pygame.draw.rect(player_surface, (255, 0, 0), (0, 0) + self.player_size)
+        # self.canvas.append(self.Canva(player_surface, self.Modes.ABSOLUTE, self.Support.MAIN, 1,
+        #                               position=(x, y)))
 
     def render_zombie(self, zombie):
         pass
 
-    def update(self):
+    def update(self) -> None:
+        """
+        Met à jour l'écran par rapport aux fonctions d'affichage appelées avant cette fonction
+        """
         self.screen.fill(Color(0, 0, 0))
         self.main.fill(Color(0, 0, 0))
 

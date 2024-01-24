@@ -9,7 +9,14 @@ class ZombieState(enum.Enum):
 
 class Zombie:
 
-    def __init__(self, x=0, y=0, inventory=None):
+    def __init__(self, x: float = 0, y: float = 0, inventory: list = None) -> None:
+        """
+        Similairement à Player, cette classe gère le déplacement et les actions des zombies
+        ATTENTION: cette classe est en cours de développement et n'est pas du tout opérationnelle
+        :param x: la position du zombie dans la pièce
+        :param y: "
+        :param inventory: l'inventaire du zombie
+        """
         if inventory is None:
             inventory = []
         self.x = x
